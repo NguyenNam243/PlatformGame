@@ -4,19 +4,25 @@ using UnityEngine;
 
 public class CharacterController : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    public float gravity = -100f;
-    public float jumpForce = 400f;
-    public float smoothTime = 0.01f;
+    [Header("Configuration")]
+    [SerializeField] private LayerMask groundLayerMask;
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float gravity = -100f;
+    [SerializeField] private float jumpForce = 400f;
+    [SerializeField] private float smoothTime = 0.01f;
+    [SerializeField] private float groundCheckRadius = 0.1f;
+    [SerializeField] private float bendDamp = 0.1f;
 
-    public LayerMask groundLayerMask;
-    public float groundCheckRadius = 0.1f;
-    public Transform groundCheckPoint = null;
+    [Header("Object Reference")]
+    [SerializeField] private Transform groundCheckPoint = null;
+
+    public bool IsJump { get; private set; }
 
     private bool grounded = false;
     private Vector2 refVelocity = Vector2.zero;
 
     private Rigidbody2D rgBody = null;
+    private Animator ator = null;
 
     private float horizontal = 0f;
     private Vector2 targetVelocity = Vector2.zero;
@@ -25,13 +31,18 @@ public class CharacterController : MonoBehaviour
     private void Awake()
     {
         rgBody = GetComponent<Rigidbody2D>();
+        ator = GetComponent<Animator>();
     }
 
     private void FixedUpdate()
     {
         grounded = Physics2D.OverlapCircle(groundCheckPoint.position, groundCheckRadius, groundLayerMask) != null;
 
+        if (grounded)
+            IsJump = false;
+
         horizontal = Input.GetAxis("Horizontal");
+        SetAnimationMovement(Mathf.Abs(horizontal));
 
         bool horizontalDown = horizontal != 0;
         if (horizontalDown)
@@ -45,9 +56,15 @@ public class CharacterController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && grounded)
         {
+            IsJump = true;
             rgBody.velocity = new Vector2(rgBody.velocity.x, 0);
             rgBody.AddForce(Vector2.up * jumpForce);
         }
+    }
+
+    private void SetAnimationMovement(float speed)
+    {
+        ator.SetFloat("Speed", speed, bendDamp, Time.deltaTime);
     }
 
     private void OnDrawGizmos()
