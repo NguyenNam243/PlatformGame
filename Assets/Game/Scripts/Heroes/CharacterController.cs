@@ -24,7 +24,7 @@ public class CharacterController : MonoBehaviour
     private Rigidbody2D rgBody = null;
     private Animator ator = null;
 
-    private float horizontal = 0f;
+    public float horizontal { get; private set; }
     private Vector2 targetVelocity = Vector2.zero;
 
 
@@ -41,6 +41,35 @@ public class CharacterController : MonoBehaviour
         if (grounded)
             IsJump = false;
 
+        rgBody.AddForce(Vector2.down * gravity);
+
+        Move();
+
+        Jump();
+
+        Attack();
+    }
+
+    private void Attack()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            ator.SetTrigger("Attack");
+        }
+    }
+
+    private void Jump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && grounded)
+        {
+            IsJump = true;
+            rgBody.velocity = new Vector2(rgBody.velocity.x, 0);
+            rgBody.AddForce(Vector2.up * jumpForce);
+        }
+    }
+
+    private void Move()
+    {
         horizontal = Input.GetAxis("Horizontal");
         SetAnimationMovement(Mathf.Abs(horizontal));
 
@@ -48,18 +77,9 @@ public class CharacterController : MonoBehaviour
         if (horizontalDown)
             transform.eulerAngles = new Vector3(transform.eulerAngles.x, horizontal < 0 ? 180 : 0, transform.eulerAngles.z);
 
-        rgBody.AddForce(Vector2.down * gravity);
-
         targetVelocity = new Vector2(horizontal * moveSpeed, rgBody.velocity.y);
 
         rgBody.velocity = Vector2.SmoothDamp(rgBody.velocity, targetVelocity, ref refVelocity, smoothTime);
-
-        if (Input.GetKeyDown(KeyCode.Space) && grounded)
-        {
-            IsJump = true;
-            rgBody.velocity = new Vector2(rgBody.velocity.x, 0);
-            rgBody.AddForce(Vector2.up * jumpForce);
-        }
     }
 
     private void SetAnimationMovement(float speed)
