@@ -8,14 +8,17 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private Transform point2 = null;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float stopingDistance = 0.5f;
+    [SerializeField] private float timeWaitPerWay = 2f;
 
     private Vector2[] movementPoint;
     private Vector2 groundContact = Vector2.zero;
 
     private Vector2 nextPoint = Vector2.zero;
     private int nextIndex = 0;
+    private float timeOut = 0;
 
     private bool grounded = false;
+    private bool onWait = false;
 
     private Rigidbody2D rgBody = null;
 
@@ -46,10 +49,33 @@ public class EnemyController : MonoBehaviour
 
         Vector2 newPos = new Vector2(transform.position.x, nextPoint.y);
         Vector2 moveDirection = nextPoint - newPos;
-        rgBody.velocity = moveDirection.normalized * moveSpeed;
+        if (!onWait)
+        {
+            rgBody.velocity = moveDirection.normalized * moveSpeed;
+        }
 
-        if (Vector2.Distance(newPos, nextPoint) < stopingDistance)
-            Time.timeScale = 0;
+        if (Vector2.Distance(newPos, nextPoint) < stopingDistance && !onWait)
+        {
+            onWait = true;
+            rgBody.velocity = Vector2.zero;
+        }
+
+        if (onWait)
+        {
+            timeOut += Time.deltaTime;
+
+            if (timeOut >= timeWaitPerWay)
+            {
+                if (nextIndex >= movementPoint.Length - 1)
+                    nextIndex = 0;
+                else
+                    nextIndex++;
+
+                nextPoint = movementPoint[nextIndex];
+                onWait = false;
+                timeOut = 0;
+            }
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
