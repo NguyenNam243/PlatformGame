@@ -14,20 +14,28 @@ public class EnemyController : MonoBehaviour
     private Vector2 groundContact = Vector2.zero;
 
     private Vector2 nextPoint = Vector2.zero;
+    private Vector2 moveDirection = Vector2.zero;
+
     private int nextIndex = 0;
     private float timeOut = 0;
 
     private bool grounded = false;
     private bool onWait = false;
+    
+    private bool onFollowPlayer = false;
 
     private Rigidbody2D rgBody = null;
     private Animator ator = null;
+    private BoxCollider2D col = null;
+
+    private CharacterController player = null;
 
 
     private void Awake()
     {
         rgBody = GetComponent<Rigidbody2D>();
         ator = GetComponent<Animator>();
+        col = GetComponent<BoxCollider2D>();
 
         RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, Vector2.down, 10, groundLayerMask);
         if (hitInfo.collider != null)
@@ -50,36 +58,59 @@ public class EnemyController : MonoBehaviour
             return;
 
         Vector2 newPos = new Vector2(transform.position.x, nextPoint.y);
-        Vector2 moveDirection = nextPoint - newPos;
-        if (!onWait)
-        {
-            rgBody.velocity = moveDirection.normalized * moveSpeed;
-        }
 
-        if (Vector2.Distance(newPos, nextPoint) < stopingDistance && !onWait)
+        if (!onFollowPlayer)
         {
-            onWait = true;
-            rgBody.velocity = Vector2.zero;
-        }
-
-        if (onWait)
-        {
-            timeOut += Time.deltaTime;
-
-            if (timeOut >= timeWaitPerWay)
+            moveDirection = nextPoint - newPos;
+            if (!onWait)
             {
-                if (nextIndex >= movementPoint.Length - 1)
-                    nextIndex = 0;
-                else
-                    nextIndex++;
-
-                nextPoint = movementPoint[nextIndex];
-                onWait = false;
-                timeOut = 0;
+                rgBody.velocity = moveDirection.normalized * moveSpeed;
             }
+
+            if (Vector2.Distance(newPos, nextPoint) < stopingDistance && !onWait)
+            {
+                onWait = true;
+                rgBody.velocity = Vector2.zero;
+            }
+
+            if (onWait)
+            {
+                timeOut += Time.deltaTime;
+
+                if (timeOut >= timeWaitPerWay)
+                {
+                    if (nextIndex >= movementPoint.Length - 1)
+                        nextIndex = 0;
+                    else
+                        nextIndex++;
+
+                    nextPoint = movementPoint[nextIndex];
+                    onWait = false;
+                    timeOut = 0;
+                }
+            }
+
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, rgBody.velocity.x < 0 ? 180 : 0, transform.eulerAngles.z);
+        }
+        else
+        {
+            if (player == null)
+                return;
+
+            Vector2 playerNewPos = new Vector2(player.transform.position.x, groundContact.y);
+            moveDirection = playerNewPos - newPos;
+            rgBody.velocity = moveDirection.normalized * moveSpeed;
+
+            if (Vector2.Distance(newPos, playerNewPos) < (col.size.x / 2) + (player.GetComponent<BoxCollider2D>().size.x / 2) + stopingDistance)
+            {
+                rgBody.velocity = Vector2.zero;
+                ator.SetTrigger("Attack");
+            }
+
+            transform.right = moveDirection.normalized;
         }
 
-        transform.eulerAngles = new Vector3(transform.eulerAngles.x, rgBody.velocity.x < 0 ? 180 : 0, transform.eulerAngles.z);
+        
 
         ator.SetFloat("Speed", rgBody.velocity.magnitude / moveSpeed);
     }
@@ -88,6 +119,24 @@ public class EnemyController : MonoBehaviour
     {
         if (collision.collider.CompareTag("Ground"))
             grounded = true;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            onFollowPlayer = true;
+            player = collision.GetComponent<CharacterController>();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            onFollowPlayer = false;
+            player = null;
+        }
     }
 
 
