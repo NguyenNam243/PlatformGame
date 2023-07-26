@@ -4773,6 +4773,7 @@ MonoBehaviour:
   point2: {fileID: 1022338844}
   moveSpeed: 5
   stopingDistance: 0.5
+  timeWaitPerWay: 1
 --- !u!95 &2032433840
 Animator:
   serializedVersion: 5
@@ -4783,7 +4784,7 @@ Animator:
   m_GameObject: {fileID: 2032433838}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 22100000, guid: e8fc143c5647bc442b3934cabbf73706, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

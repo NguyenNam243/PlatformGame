@@ -21,11 +21,13 @@ public class EnemyController : MonoBehaviour
     private bool onWait = false;
 
     private Rigidbody2D rgBody = null;
+    private Animator ator = null;
 
 
     private void Awake()
     {
         rgBody = GetComponent<Rigidbody2D>();
+        ator = GetComponent<Animator>();
 
         RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, Vector2.down, 10, groundLayerMask);
         if (hitInfo.collider != null)
@@ -76,6 +78,10 @@ public class EnemyController : MonoBehaviour
                 timeOut = 0;
             }
         }
+
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, rgBody.velocity.x < 0 ? 180 : 0, transform.eulerAngles.z);
+
+        ator.SetFloat("Speed", rgBody.velocity.magnitude / moveSpeed);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
