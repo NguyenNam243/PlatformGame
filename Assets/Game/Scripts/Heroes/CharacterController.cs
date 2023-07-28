@@ -1,6 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterController : MonoBehaviour
 {
@@ -12,11 +12,14 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private float smoothTime = 0.01f;
     [SerializeField] private float groundCheckRadius = 0.1f;
     [SerializeField] private float bendDamp = 0.1f;
+    [SerializeField] private float maxHealth = 10f;
 
     [Header("Object Reference")]
     [SerializeField] private Transform groundCheckPoint = null;
+    [SerializeField] private Image healthBarFill = null;
 
     public bool IsJump { get; private set; }
+    public bool Alive { get; private set; }
 
     private bool grounded = false;
     private Vector2 refVelocity = Vector2.zero;
@@ -27,25 +30,40 @@ public class CharacterController : MonoBehaviour
     public float horizontal { get; private set; }
     private Vector2 targetVelocity = Vector2.zero;
 
+    private float currentHealth;
+
 
     private void Awake()
     {
         rgBody = GetComponent<Rigidbody2D>();
         ator = GetComponent<Animator>();
+
+        Alive = true;
+        currentHealth = maxHealth;
+    }
+
+    private void Update()
+    {
+        if (!Alive)
+            return;
+
+        grounded = Physics2D.OverlapCircle(groundCheckPoint.position, groundCheckRadius, groundLayerMask) != null;
+        IsJump = Input.GetKeyDown(KeyCode.Space);
     }
 
     private void FixedUpdate()
     {
-        grounded = Physics2D.OverlapCircle(groundCheckPoint.position, groundCheckRadius, groundLayerMask) != null;
-
-        if (grounded)
-            IsJump = false;
+        if (!Alive)
+            return;
 
         rgBody.AddForce(Vector2.down * gravity);
 
         Move();
 
         Jump();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            Debug.Log("Jump");
 
         Attack();
     }
@@ -58,13 +76,30 @@ public class CharacterController : MonoBehaviour
         }
     }
 
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+
+        float ratio = currentHealth / maxHealth;
+
+        healthBarFill.DOFillAmount(ratio, 0.25f);
+
+        //healthBarFill.fillAmount = ratio;
+
+        if (currentHealth <= 0)
+        {
+            Alive = false;
+            ator.SetTrigger("Die");
+        }
+    }
+
     private void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && grounded)
+        if (IsJump && grounded)
         {
-            IsJump = true;
-            rgBody.velocity = new Vector2(rgBody.velocity.x, 0);
+            rgBody.velocity = new Vector2(rgBody.velocity.x, rgBody.velocity.y);
             rgBody.AddForce(Vector2.up * jumpForce);
+            Debug.Log("Jump");
         }
     }
 

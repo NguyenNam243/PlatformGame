@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float stopingDistance = 0.5f;
     [SerializeField] private float timeWaitPerWay = 2f;
+    [SerializeField] private float damage = 1f;
 
     private Vector2[] movementPoint;
     private Vector2 groundContact = Vector2.zero;
@@ -94,14 +95,14 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            if (player == null)
+            if (player == null || !player.Alive)
                 return;
 
             Vector2 playerNewPos = new Vector2(player.transform.position.x, groundContact.y);
             moveDirection = playerNewPos - newPos;
             rgBody.velocity = moveDirection.normalized * moveSpeed;
 
-            if (Vector2.Distance(newPos, playerNewPos) < (col.size.x / 2) + (player.GetComponent<BoxCollider2D>().size.x / 2) + stopingDistance)
+            if (player.Alive && Vector2.Distance(newPos, playerNewPos) < (col.size.x / 2) + (player.GetComponent<BoxCollider2D>().size.x / 2) + stopingDistance)
             {
                 rgBody.velocity = Vector2.zero;
                 ator.SetTrigger("Attack");
@@ -113,6 +114,14 @@ public class EnemyController : MonoBehaviour
         
 
         ator.SetFloat("Speed", rgBody.velocity.magnitude / moveSpeed);
+    }
+
+    public void Attack()
+    {
+        if (player.Alive)
+            player.TakeDamage(damage);
+        else
+            ator.ResetTrigger("Attack");
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
