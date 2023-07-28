@@ -21,6 +21,8 @@ public class CharacterController : MonoBehaviour
     public bool IsJump { get; private set; }
     public bool Alive { get; private set; }
 
+    private bool onJump = false;
+
     private bool grounded = false;
     private Vector2 refVelocity = Vector2.zero;
 
@@ -48,7 +50,7 @@ public class CharacterController : MonoBehaviour
             return;
 
         grounded = Physics2D.OverlapCircle(groundCheckPoint.position, groundCheckRadius, groundLayerMask) != null;
-        IsJump = Input.GetKeyDown(KeyCode.Space);
+        IsJump = Input.GetKey(KeyCode.Space);
     }
 
     private void FixedUpdate()
@@ -56,14 +58,9 @@ public class CharacterController : MonoBehaviour
         if (!Alive)
             return;
 
-        rgBody.AddForce(Vector2.down * gravity);
-
         Move();
 
         Jump();
-
-        if (Input.GetKeyDown(KeyCode.Space))
-            Debug.Log("Jump");
 
         Attack();
     }
@@ -84,8 +81,6 @@ public class CharacterController : MonoBehaviour
 
         healthBarFill.DOFillAmount(ratio, 0.25f);
 
-        //healthBarFill.fillAmount = ratio;
-
         if (currentHealth <= 0)
         {
             Alive = false;
@@ -95,9 +90,10 @@ public class CharacterController : MonoBehaviour
 
     private void Jump()
     {
-        if (IsJump && grounded)
+        if (IsJump && grounded && !onJump)
         {
-            rgBody.velocity = new Vector2(rgBody.velocity.x, rgBody.velocity.y);
+            onJump = true;
+            rgBody.velocity = new Vector2(rgBody.velocity.x, 0);
             rgBody.AddForce(Vector2.up * jumpForce);
             Debug.Log("Jump");
         }
@@ -105,6 +101,8 @@ public class CharacterController : MonoBehaviour
 
     private void Move()
     {
+        rgBody.AddForce(Vector2.down * gravity);
+
         horizontal = Input.GetAxis("Horizontal");
         SetAnimationMovement(Mathf.Abs(horizontal));
 
@@ -120,6 +118,12 @@ public class CharacterController : MonoBehaviour
     private void SetAnimationMovement(float speed)
     {
         ator.SetFloat("Speed", speed, bendDamp, Time.deltaTime);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Ground"))
+            onJump = false;
     }
 
     private void OnDrawGizmos()
