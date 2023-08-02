@@ -41,6 +41,11 @@ public class CharacterController : MonoBehaviour
 
     private float currentHealth;
     private float currentMana;
+    public float CurrentMana 
+    {
+        get => Mathf.Clamp(currentMana, 0, maxMana);
+        set => currentMana = value;
+    }
 
     private bool isSpeedup = false;
     private bool onSpeedup = false;
@@ -59,7 +64,7 @@ public class CharacterController : MonoBehaviour
 
         Alive = true;
         currentHealth = maxHealth;
-        currentMana = maxMana;
+        CurrentMana = maxMana;
     }
 
     private void Update()
@@ -130,7 +135,8 @@ public class CharacterController : MonoBehaviour
         if (horizontalDown)
             transform.eulerAngles = new Vector3(transform.eulerAngles.x, horizontal < 0 ? 180 : 0, transform.eulerAngles.z);
 
-        float applyMoveSpeed = horizontalDown && isSpeedup ? moveSpeed + addedSpeed : moveSpeed;
+
+        float applyMoveSpeed = horizontalDown && isSpeedup && CurrentMana > 0 ? moveSpeed + addedSpeed : moveSpeed;
 
         targetVelocity = new Vector2(horizontal * applyMoveSpeed, rgBody.velocity.y);
 
@@ -139,7 +145,7 @@ public class CharacterController : MonoBehaviour
         if (isSpeedup && !onSpeedup)
         {
             onSpeedup = true;
-            SetMana(currentMana - minusFirtSpeedup);
+            SetMana(CurrentMana - minusFirtSpeedup);
         }
 
         if (onSpeedup)
@@ -147,8 +153,8 @@ public class CharacterController : MonoBehaviour
             countTimeMinusMana += Time.deltaTime;
             if (countTimeMinusMana >= minusPerSecond)
             {
-                currentMana -= minusPerSecond;
-                SetMana(currentMana);
+                CurrentMana -= minusPerSecond;
+                SetMana(CurrentMana);
                 countTimeMinusMana = 0;
             }
         }
@@ -158,9 +164,9 @@ public class CharacterController : MonoBehaviour
 
         if (!onSpeedup)
         {
-            if (currentMana >= maxMana)
+            if (CurrentMana >= maxMana)
             {
-                currentMana = maxMana;
+                CurrentMana = maxMana;
                 return;
             }
 
@@ -170,9 +176,9 @@ public class CharacterController : MonoBehaviour
                 countTimeAddMana += Time.deltaTime;
                 if (countTimeAddMana >= 1)
                 {
-                    currentMana += recoverPerSecond;
+                    CurrentMana += recoverPerSecond;
                     countTimeAddMana = 0;
-                    SetMana(currentMana);
+                    SetMana(CurrentMana);
                 }
             }
         }
@@ -186,7 +192,7 @@ public class CharacterController : MonoBehaviour
 
         float ratio = newValue / maxMana;
         fillTween = manaFill.DOFillAmount(ratio, 0.25f).SetEase(Ease.OutBack);
-        currentMana = newValue;
+        CurrentMana = newValue;
     }
 
     private void SetAnimationMovement(float speed)
