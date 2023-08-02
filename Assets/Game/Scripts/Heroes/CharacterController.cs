@@ -41,7 +41,7 @@ public class CharacterController : MonoBehaviour
 
     private float currentHealth;
     private float currentMana;
-    public float CurrentMana 
+    public float CurrentMana
     {
         get => Mathf.Clamp(currentMana, 0, maxMana);
         set => currentMana = value;
@@ -118,7 +118,6 @@ public class CharacterController : MonoBehaviour
         if (IsJump && grounded && !onJump)
         {
             onJump = true;
-            rgBody.velocity = new Vector2(rgBody.velocity.x, 0);
             rgBody.AddForce(Vector2.up * jumpForce);
             Debug.Log("Jump");
         }
@@ -131,14 +130,18 @@ public class CharacterController : MonoBehaviour
         horizontal = Input.GetAxis("Horizontal");
         SetAnimationMovement(Mathf.Abs(horizontal));
 
-       
         if (horizontalDown)
-            transform.eulerAngles = new Vector3(transform.eulerAngles.x, horizontal < 0 ? 180 : 0, transform.eulerAngles.z);
-
+        {
+            float eulerAngleY = horizontal < 0 ? 180 : 0;
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, eulerAngleY, transform.eulerAngles.z);
+            healthBarFill.rectTransform.localEulerAngles = new Vector3(0, -eulerAngleY, 0);
+        }
 
         float applyMoveSpeed = horizontalDown && isSpeedup && CurrentMana > 0 ? moveSpeed + addedSpeed : moveSpeed;
-
         targetVelocity = new Vector2(horizontal * applyMoveSpeed, rgBody.velocity.y);
+
+        //if (!grounded)
+        //    rgBody.AddForce(Vector2.down * gravity);
 
         rgBody.velocity = Vector2.SmoothDamp(rgBody.velocity, targetVelocity, ref refVelocity, smoothTime);
 
