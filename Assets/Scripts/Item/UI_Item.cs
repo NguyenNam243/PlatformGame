@@ -1,23 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_Item : MonoBehaviour
+public class UI_Item : MonoBehaviour, IPointerDownHandler
 {
     public Image border = null;
     public Image bgImage = null;
     public Image itemicon = null;
     public Color[] backgroundColor;
 
-    private readonly string uiItemAssetsPath = "Sprites/{0}/{1}";
+    private readonly string borderPath = "Sprites/Border/{0}";
+    private readonly string itemPath = "Sprites/Items/{0}/{1}";
+
+    public ItemData ItemData { get; private set; }
+
+
+    public bool IsHold { get; private set; }
 
 
     public void Initialized(ItemData itemData)
     {
-        border.sprite = Resources.Load<Sprite>(string.Format(uiItemAssetsPath, "Border", itemData.rarity.ToString()));
+        this.ItemData = itemData;
+        border.sprite = Resources.Load<Sprite>(string.Format(borderPath, itemData.rarity.ToString()));
         bgImage.color = GetColorByRarity(itemData.rarity);
-        itemicon.sprite = Resources.Load<Sprite>(string.Format(uiItemAssetsPath, "Items", itemData.itemName));
+        itemicon.sprite = Resources.Load<Sprite>(string.Format(itemPath, itemData.type.ToString(), itemData.itemName));
+
     }
 
     private Color GetColorByRarity(Rarity rarity)
@@ -34,5 +43,11 @@ public class UI_Item : MonoBehaviour
                 return backgroundColor[3];
         }
         return backgroundColor[0];
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        IsHold = true;
+        PopupManager.Instance.ShowPopupItemDetail(ItemData);
     }
 }

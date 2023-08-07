@@ -13,11 +13,63 @@ MonoBehaviour:
   m_Name: ItemsData
   m_EditorClassIdentifier: 
   items:
-  - itemName: Item1
+  - type: 1
     rarity: 0
-  - itemName: Item2
+    itemName: Weapon1
+  - type: 2
     rarity: 1
-  - itemName: Item3
+    itemName: Armor1
+  - type: 3
     rarity: 2
-  - itemName: Item4
+    itemName: Boots1
+  - type: 4
     rarity: 3
+    itemName: Ring1
+  - type: 2
+    rarity: 1
+    itemName: Armor2
+  - type: 3
+    rarity: 1
+    itemName: Boots2
+  - type: 3
+    rarity: 0
+    itemName: Boots3
+  - type: 1
+    rarity: 2
+    itemName: Weapon2
+  - type: 3
+    rarity: 1
+    itemName: Boots4
+  - type: 4
+    rarity: 2
+    itemName: Ring4
+  - type: 2
+    rarity: 2
+    itemName: Armor3
+  - type: 4
+    rarity: 0
+    itemName: Ring3
+  - type: 3
+    rarity: 2
+    itemName: Boots1
+  - type: 2
+    rarity: 1
+    itemName: Armor2
+  - type: 3
+    rarity: 2
+    itemName: Boots3
+  - type: 2
+    rarity: 1
+    itemName: Armor4
+  - type: 4
+    rarity: 0
+    itemName: Ring2
+  - type: 3
+    rarity: 0
+    itemName: Boots1
+  - type: 3
+    rarity: 1
+    itemName: Boots2
+  - type: 1
+    rarity: 3
+    itemName: Weapon3
