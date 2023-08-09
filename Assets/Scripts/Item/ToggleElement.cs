@@ -14,11 +14,20 @@ public class ToggleElement : MonoBehaviour
 
 
     private Toggle toggle = null;
+    private Toggle Toggle 
+    {
+        get
+        {
+            if (toggle == null)
+                toggle = GetComponent<Toggle>();
+            return toggle;
+        }
+    }
 
     public bool IsOn 
     {
-        get => toggle.isOn;
-        set => toggle.isOn = value;
+        get => Toggle.isOn;
+        set => Toggle.isOn = value;
     }
 
     public Action<ItemType> OnSelected = null;
@@ -28,8 +37,7 @@ public class ToggleElement : MonoBehaviour
 
     private void Awake()
     {
-        toggle = GetComponent<Toggle>();
-        toggle.onValueChanged.AddListener(OnToggleChanged);
+        Toggle.onValueChanged.AddListener(OnToggleChanged);
     }
 
     private void OnToggleChanged(bool isOn)

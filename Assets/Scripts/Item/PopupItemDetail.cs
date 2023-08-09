@@ -1,12 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PopupItemDetail : MonoBehaviour
 {
+    public EquipmentsManager equipmentsManager = null;
     public Button closeBtn = null;
+    public Button equipBtn = null;
     public Image icon = null;
     public TMP_Text itemType = null;
     public TMP_Text itemRarity = null;
@@ -18,18 +18,31 @@ public class PopupItemDetail : MonoBehaviour
 
 
     private readonly string itemPath = "Sprites/Items/{0}/{1}";
+    private UIAnimation _animation = null;
 
     private CanvasGroup canvasGr = null;
+
+    private ItemData itemData = null;
 
 
     private void Awake()
     {
+        _animation = GetComponent<UIAnimation>();
         canvasGr = GetComponent<CanvasGroup>();
         closeBtn.onClick.AddListener(HidePopup);
+        equipBtn.onClick.AddListener(OnEquipClicked);
+    }
+
+    private void OnEquipClicked()
+    {
+        equipmentsManager.OnEquipCostume(itemData);
+        HidePopup();
     }
 
     public void ShowItemDetail(ItemData itemData)
     {
+        this.itemData = itemData;
+
         icon.sprite = Resources.Load<Sprite>(string.Format(itemPath, itemData.type.ToString(), itemData.itemName));
         itemType.text = itemData.type.ToString();
         itemRarity.text = itemData.rarity.ToString();
@@ -41,6 +54,7 @@ public class PopupItemDetail : MonoBehaviour
         SPDText.text = itemData.SPD.ToString();
 
         canvasGr.Active();
+        _animation.DoAnimation();
     }
 
     public void HidePopup()

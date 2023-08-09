@@ -16,60 +16,140 @@ MonoBehaviour:
   - type: 1
     rarity: 0
     itemName: Weapon1
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 2
     rarity: 1
     itemName: Armor1
+    HP: 40
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 3
     rarity: 2
     itemName: Boots1
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 4
     rarity: 3
     itemName: Ring1
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 2
     rarity: 1
     itemName: Armor2
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 3
     rarity: 1
     itemName: Boots2
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 3
     rarity: 0
     itemName: Boots3
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 1
     rarity: 2
     itemName: Weapon2
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 3
     rarity: 1
     itemName: Boots4
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 4
     rarity: 2
     itemName: Ring4
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 2
     rarity: 2
     itemName: Armor3
+    HP: 60
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 4
     rarity: 0
     itemName: Ring3
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 3
     rarity: 2
     itemName: Boots1
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 2
     rarity: 1
     itemName: Armor2
+    HP: 70
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 3
     rarity: 2
     itemName: Boots3
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 2
     rarity: 1
     itemName: Armor4
+    HP: 30
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 4
     rarity: 0
     itemName: Ring2
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 3
     rarity: 0
     itemName: Boots1
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 3
     rarity: 1
     itemName: Boots2
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
   - type: 1
     rarity: 3
     itemName: Weapon3
+    HP: 50
+    ATK: 5
+    DFS: 3
+    SPD: 1
